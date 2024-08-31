@@ -17,6 +17,7 @@ export function Header({}: HeaderProps) {
         <nav className="flex h-full">
           <NavLink href="/">Home</NavLink>
           <NavLink href="/subjects">Matérias</NavLink>
+          <NavLink href="/grades">Minhas notas</NavLink>
           <NavLink href="/awards">Insígnias</NavLink>
         </nav>
 

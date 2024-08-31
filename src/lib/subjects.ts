@@ -9,7 +9,7 @@ export async function getAllSubjects(): Promise<SubjectsResponse> {
       "Content-Type": "application/json",
     },
     next: {
-      revalidate: 60 * 60 * 24, // 24 hours
+      revalidate: 60 * 60 * 24 * 7, // 1 week in seconds
       tags: ["subjects"],
     },
   };

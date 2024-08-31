@@ -33,10 +33,15 @@ export default async function ListSubjectsPage({
   });
 
   return (
-    <main className="flex py-8 px-6 max-w-5xl mx-auto w-full gap-8">
-      <aside className="flex flex-col gap-8 min-w-20">
+    <main className="flex py-8 px-6 max-w-5xl mx-auto w-full gap-16">
+      <aside className="flex flex-col gap-8 max-w-[30%]">
         <header className="flex flex-col gap-1">
-          <h1 className="text-primary font-bold text-3xl">Matérias</h1>
+          <h1 className="text-primary font-bold text-3xl">
+            Matérias{" "}
+            <span className="font-normal text-base text-accent-foreground">
+              ({filteredSubjects.length})
+            </span>
+          </h1>
           <span className="text-accent-foreground">
             Veja todas as matérias disponíveis
           </span>
