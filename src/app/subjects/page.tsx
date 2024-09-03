@@ -1,18 +1,21 @@
 import { Separator } from "@/components/ui/separator";
 import { getAllSubjects } from "@/lib/subjects";
+import { sleep } from "@/lib/utils";
 import { Subject } from "@/types/subjects";
 import { Fragment } from "react";
 import { SearchAndFilter } from "./_components/search-and-filter";
 import { SubjectCard } from "./_components/subject-card";
 
-interface ListSubjectsPageProps {
+interface SubjectsPageProps {
   searchParams: { search?: string; courses?: string };
 }
 
-export default async function ListSubjectsPage({
+export default async function SubjectsPage({
   searchParams,
-}: ListSubjectsPageProps) {
+}: SubjectsPageProps) {
   const subjectsData = await getAllSubjects();
+  await sleep(1000);
+
   const subjectsArray = Object.values(subjectsData);
 
   const selectedCourses = searchParams.courses
@@ -33,12 +36,12 @@ export default async function ListSubjectsPage({
   });
 
   return (
-    <main className="flex py-8 px-6 max-w-5xl mx-auto w-full gap-16">
-      <aside className="flex flex-col gap-8 max-w-[30%]">
+    <>
+      <aside className="flex flex-col gap-8 md:max-w-80 flex-1 h-fit sticky top-[calc(4rem+2rem)]">
         <header className="flex flex-col gap-1">
           <h1 className="text-primary font-bold text-3xl">
             Matérias{" "}
-            <span className="font-normal text-base text-accent-foreground">
+            <span className="font-normal text-base text-muted-foreground">
               ({filteredSubjects.length})
             </span>
           </h1>
@@ -71,6 +74,6 @@ export default async function ListSubjectsPage({
           </div>
         )}
       </ul>
-    </main>
+    </>
   );
 }

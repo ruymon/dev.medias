@@ -5,9 +5,8 @@ export function calculateSubjectGrade(
   subject: Subject,
   subjectGrades: SubjectGrades
 ): number {
-  if (subjectGrades.length === 0) {
-    return 0;
-  }
+  const isSubjectGradesEmpty = Object.keys(subjectGrades).length === 0;
+  if (isSubjectGradesEmpty) return 0;
 
   const examGrade = subject.exams.reduce((total, exam) => {
     return total + (subjectGrades[exam.name] || 0) * exam.weight;

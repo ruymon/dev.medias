@@ -19,8 +19,9 @@ import { useSubscribedSubjectsStore } from "@/stores/subscribed-subjects-store";
 
 import { Subject } from "@/types/subjects";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
+import { HighlightText } from "./highlight-text";
 
 interface SubjectCardProps extends Subject {}
 
@@ -28,63 +29,44 @@ export function SubjectCard(subject: SubjectCardProps) {
   const { addSubscribedSubject, removeSubscribedSubject, subscribedSubjects } =
     useSubscribedSubjectsStore();
 
-  const [isSubscribed, setIsSubscribed] = useState(false);
   const [isMoreDetailsOpen, setIsMoreDetailsOpen] = useState(false);
 
   const searchParams = useSearchParams();
   const searchTerm = searchParams.get("search")?.toLowerCase();
 
-  useEffect(() => {
-    setIsSubscribed(!!subscribedSubjects[subject.code]);
-  }, [subject.code, subscribedSubjects]);
-
-  const highlightText = (text: string) => {
-    if (!searchTerm) return text;
-
-    const parts = text.split(new RegExp(`(${searchTerm})`, "gi"));
-
-    return parts.map((part, index) =>
-      part.toLowerCase() === searchTerm ? (
-        <span key={index} className="bg-yellow-200 dark:bg-yellow-600/40">
-          {part}
-        </span>
-      ) : (
-        part
-      )
-    );
-  };
+  const isSubjectSubscribed = subscribedSubjects[subject.code];
 
   const handleSubscribe = () => {
-    if (isSubscribed) {
-      removeSubscribedSubject(subject.code);
-      toast.message("Removido!", {
-        description: `${subject.name} foi removido da sua lista de matérias`,
-      });
-    } else {
-      addSubscribedSubject(subject);
-      toast.message("Adicionado!", {
-        description: `${subject.name} foi adicionado à sua lista de matérias`,
-      });
-    }
+    addSubscribedSubject(subject);
+    toast.message("Adicionado!", {
+      description: `${subject.name} foi adicionado à sua lista de matérias`,
+    });
+  };
 
-    setIsSubscribed(!isSubscribed);
+  const handleUnsubscribe = () => {
+    removeSubscribedSubject(subject.code);
+    toast.message("Removido!", {
+      description: `${subject.name} foi removido da sua lista de matérias`,
+    });
   };
 
   return (
     <Card className="border-none py-4 flex flex-col gap-2 shadow-none">
       <div className="flex items-center justify-between">
         <CardHeader className="space-y-0 p-0">
-          <CardDescription>{highlightText(subject.code)}</CardDescription>
+          <CardDescription>
+            <HighlightText text={subject.code} searchTerm={searchTerm} />
+          </CardDescription>
           <CardTitle className="text-secondary-foreground text-xl font-bold">
-            {highlightText(subject.name)}
+            <HighlightText text={subject.name} searchTerm={searchTerm} />
           </CardTitle>
         </CardHeader>
         <Button
-          onClick={handleSubscribe}
-          variant={isSubscribed ? "destructive" : "secondary"}
-          size={"sm"}
+          onClick={isSubjectSubscribed ? handleUnsubscribe : handleSubscribe}
+          variant={isSubjectSubscribed ? "destructive" : "secondary"}
+          size="sm"
         >
-          {isSubscribed ? "Remover" : "Adicionar"}
+          {isSubjectSubscribed ? "Remover" : "Adicionar"}
         </Button>
       </div>
 

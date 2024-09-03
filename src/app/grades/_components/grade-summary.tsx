@@ -22,10 +22,10 @@ export function GradeSummary({
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {subjects.map((subject) => {
-          const subjectGrade = calculateSubjectGrade(
-            subject,
-            grades[subject.code]
-          );
+          const isSubjectGradesEmpty = !grades[subject.code];
+          const subjectGrade = isSubjectGradesEmpty
+            ? 0
+            : calculateSubjectGrade(subject, grades[subject.code]);
 
           const badgeVariant: BadgeProps["variant"] =
             subjectGrade >= 6

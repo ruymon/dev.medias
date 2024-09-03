@@ -64,6 +64,9 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground scroll-smooth;
+
+    /* @see https://dev.to/rashidshamloo/preventing-the-layout-shift-caused-by-scrollbars-2flp */
+    @apply pl-[calc(100vw-100%)];
   }
 }
