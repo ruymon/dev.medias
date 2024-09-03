@@ -1,7 +1,9 @@
-import { Subjects } from "@/types/subjects";
+interface CoursesResponse {
+  [key: string]: string;
+}
 
-export async function getAllSubjects(): Promise<Subjects> {
-  const url = "https://d2aa4b9d9pswiy.cloudfront.net/allSubjects.json";
+export async function getCoursesNames(): Promise<CoursesResponse> {
+  const url = "https://d2aa4b9d9pswiy.cloudfront.net/courses.json";
 
   const options: RequestInit = {
     method: "GET",
@@ -10,7 +12,7 @@ export async function getAllSubjects(): Promise<Subjects> {
     },
     next: {
       revalidate: 60 * 60 * 24 * 7, // 1 week in seconds
-      tags: ["subjects"],
+      tags: ["courses-names"],
     },
   };
 
@@ -18,7 +20,7 @@ export async function getAllSubjects(): Promise<Subjects> {
   const data = await result.json();
 
   if (!result.ok) {
-    throw new Error("Error fetching subjects:", data);
+    throw new Error("Error fetching courses names:", data);
   }
 
   return data;

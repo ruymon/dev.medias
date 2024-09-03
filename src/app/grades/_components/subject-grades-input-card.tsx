@@ -14,12 +14,13 @@ import {
 } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SubjectGrades } from "@/types/grades";
 import { Subject } from "@/types/subjects";
 import { useState } from "react";
 
 interface SubjectGradesInputCardProps {
   subject: Subject;
-  grades: Record<string, number>;
+  grades: SubjectGrades;
   onGradeChange: (examOrAssignment: string, grade: number) => void;
 }
 
@@ -56,7 +57,7 @@ export function SubjectGradesInputCard({
                   {subject.exams.map((exam) => (
                     <div key={exam.name}>
                       <Label htmlFor={`${subject.code}-${exam.name}`}>
-                        {exam.name} ({exam.weight})
+                        {exam.name} ({exam.weight.toFixed(2)})
                       </Label>
                       <Input
                         id={`${subject.code}-${exam.name}`}
@@ -77,13 +78,13 @@ export function SubjectGradesInputCard({
             {subject.assignmentWeight > 0 && subject.assignments && (
               <section>
                 <h3 className="font-semibold mb-2">
-                  Trabalhos ({subject.assignmentWeight}%)
+                  Trabalhos ({subject.assignmentWeight.toFixed(0)}%)
                 </h3>
                 <div className="grid grid-cols-2 gap-4">
                   {subject.assignments.map((assignment) => (
                     <div key={assignment.name}>
                       <Label htmlFor={`${subject.code}-${assignment.name}`}>
-                        {assignment.name} ({assignment.weight})
+                        {assignment.name} ({assignment.weight.toFixed(2)})
                       </Label>
                       <Input
                         id={`${subject.code}-${assignment.name}`}

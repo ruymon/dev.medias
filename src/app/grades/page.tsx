@@ -2,29 +2,17 @@
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Subject } from "@/types/subjects";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { useSubscribedSubjectsGradesStore } from "@/stores/subscribed-subjects-grades-store";
+import { useSubscribedSubjectsStore } from "@/stores/subscribed-subjects-store";
+import { Fragment, useRef } from "react";
 import { GradeSummary } from "./_components/grade-summary";
 import { SubjectGradesInputCard } from "./_components/subject-grades-input-card";
 
 export default function GradesPage() {
-  const [subscribedSubjects, setSubscribedSubjects] = useState<
-    Record<string, Subject>
-  >({});
-  const [grades, setGrades] = useState<Record<string, Record<string, number>>>(
-    {}
-  );
+  const { subscribedSubjects } = useSubscribedSubjectsStore();
+  const { grades, setGrades } = useSubscribedSubjectsGradesStore();
+
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    const storedSubjects = JSON.parse(
-      localStorage.getItem("subscribedSubjects") || "{}"
-    );
-    setSubscribedSubjects(storedSubjects);
-
-    const storedGrades = JSON.parse(localStorage.getItem("grades") || "{}");
-    setGrades(storedGrades);
-  }, []);
 
   const handleGradeChange = (
     subjectCode: string,
@@ -39,12 +27,10 @@ export default function GradesPage() {
       },
     };
     setGrades(updatedGrades);
-    localStorage.setItem("grades", JSON.stringify(updatedGrades));
   };
 
   const handleClearGrades = () => {
     setGrades({});
-    localStorage.removeItem("grades");
   };
 
   const handleExportGrades = async () => {
@@ -96,7 +82,6 @@ export default function GradesPage() {
         const content = await file.text();
         const importedGrades = JSON.parse(content);
         setGrades(importedGrades);
-        localStorage.setItem("grades", JSON.stringify(importedGrades));
       } catch (err) {
         console.error("Failed to open file:", err);
       }
@@ -113,7 +98,6 @@ export default function GradesPage() {
         const content = e.target?.result as string;
         const importedGrades = JSON.parse(content);
         setGrades(importedGrades);
-        localStorage.setItem("grades", JSON.stringify(importedGrades));
       };
       reader.readAsText(file);
     }
@@ -125,7 +109,7 @@ export default function GradesPage() {
         {Object.keys(subscribedSubjects).length > 0 && (
           <>
             <GradeSummary
-              subjects={Object.values(subscribedSubjects)}
+              subscribedSubjects={subscribedSubjects}
               grades={grades}
             />
             <Button
@@ -157,7 +141,7 @@ export default function GradesPage() {
               ref={fileInputRef}
               onChange={handleFileInput}
               accept=".json"
-              style={{ display: "none" }}
+              className="hidden"
             />
           </>
         )}

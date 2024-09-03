@@ -10,6 +10,6 @@ export interface Subject {
   courses: { [key: string]: number };
 }
 
-export interface SubjectsResponse {
+export interface Subjects {
   [key: string]: Subject;
 }

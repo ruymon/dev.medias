@@ -15,6 +15,8 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { useSubscribedSubjectsStore } from "@/stores/subscribed-subjects-store";
+
 import { Subject } from "@/types/subjects";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -23,24 +25,24 @@ import { toast } from "sonner";
 interface SubjectCardProps extends Subject {}
 
 export function SubjectCard(subject: SubjectCardProps) {
+  const { addSubscribedSubject, removeSubscribedSubject, subscribedSubjects } =
+    useSubscribedSubjectsStore();
+
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isMoreDetailsOpen, setIsMoreDetailsOpen] = useState(false);
 
   const searchParams = useSearchParams();
   const searchTerm = searchParams.get("search")?.toLowerCase();
-  const coursesFilter = searchParams.get("courses")?.split(",");
 
   useEffect(() => {
-    const subscribedSubjects = JSON.parse(
-      localStorage.getItem("subscribedSubjects") || "{}"
-    );
     setIsSubscribed(!!subscribedSubjects[subject.code]);
-  }, [subject.code]);
+  }, [subject.code, subscribedSubjects]);
 
   const highlightText = (text: string) => {
     if (!searchTerm) return text;
 
     const parts = text.split(new RegExp(`(${searchTerm})`, "gi"));
+
     return parts.map((part, index) =>
       part.toLowerCase() === searchTerm ? (
         <span key={index} className="bg-yellow-200 dark:bg-yellow-600/40">
@@ -53,24 +55,18 @@ export function SubjectCard(subject: SubjectCardProps) {
   };
 
   const handleSubscribe = () => {
-    const subscribedSubjects = JSON.parse(
-      localStorage.getItem("subscribedSubjects") || "{}"
-    );
     if (isSubscribed) {
-      delete subscribedSubjects[subject.code];
+      removeSubscribedSubject(subject.code);
       toast.message("Removido!", {
         description: `${subject.name} foi removido da sua lista de matérias`,
       });
     } else {
-      subscribedSubjects[subject.code] = subject;
+      addSubscribedSubject(subject);
       toast.message("Adicionado!", {
         description: `${subject.name} foi adicionado à sua lista de matérias`,
       });
     }
-    localStorage.setItem(
-      "subscribedSubjects",
-      JSON.stringify(subscribedSubjects)
-    );
+
     setIsSubscribed(!isSubscribed);
   };
 

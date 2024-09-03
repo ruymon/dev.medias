@@ -1,29 +1,19 @@
 import { Badge, BadgeProps } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Subject } from "@/types/subjects";
+import { calculateSubjectGrade } from "@/lib/grades";
+import { Grades } from "@/types/grades";
+import { Subjects } from "@/types/subjects";
 
 interface GradeSummaryProps {
-  subjects: Subject[];
-  grades: Record<string, Record<string, number>>;
+  subscribedSubjects: Subjects;
+  grades: Grades;
 }
 
-export function GradeSummary({ subjects, grades }: GradeSummaryProps) {
-  const calculateSubjectGrade = (subject: Subject) => {
-    const subjectGrades = grades[subject.code] || {};
-
-    const examGrade = subject.exams.reduce((total, exam) => {
-      return total + (subjectGrades[exam.name] || 0) * exam.weight;
-    }, 0);
-
-    const assignmentGrade = subject.assignments.reduce((total, assignment) => {
-      return total + (subjectGrades[assignment.name] || 0) * assignment.weight;
-    }, 0);
-
-    return (
-      (examGrade * subject.examWeight) / 100 +
-      (assignmentGrade * subject.assignmentWeight) / 100
-    );
-  };
+export function GradeSummary({
+  subscribedSubjects,
+  grades,
+}: GradeSummaryProps) {
+  const subjects = Object.values(subscribedSubjects);
 
   return (
     <Card className="rounded-b-none">
@@ -32,7 +22,10 @@ export function GradeSummary({ subjects, grades }: GradeSummaryProps) {
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {subjects.map((subject) => {
-          const subjectGrade = calculateSubjectGrade(subject);
+          const subjectGrade = calculateSubjectGrade(
+            subject,
+            grades[subject.code]
+          );
 
           const badgeVariant: BadgeProps["variant"] =
             subjectGrade >= 6
@@ -49,9 +42,7 @@ export function GradeSummary({ subjects, grades }: GradeSummaryProps) {
                 {subject.name} ({subject.code})
               </span>
 
-              <Badge variant={badgeVariant}>
-                {calculateSubjectGrade(subject).toFixed(2)}
-              </Badge>
+              <Badge variant={badgeVariant}>{subjectGrade.toFixed(2)}</Badge>
             </div>
           );
         })}
