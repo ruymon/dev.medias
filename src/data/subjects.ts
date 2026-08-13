@@ -2455,7 +2455,10 @@ export const SUBJECTS: Subjects = {
       { name: "P1", weight: 0.5 },
       { name: "P2", weight: 0.5 },
     ],
-    assignments: [{ name: "T1", weight: 1 }],
+    assignments: [
+      { name: "T1", weight: 0.5 },
+      { name: "T2", weight: 0.5 },
+    ],
   },
   ECM306: {
     course: "Engenharia de Computação",
